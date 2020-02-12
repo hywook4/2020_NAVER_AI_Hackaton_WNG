@@ -2,7 +2,8 @@ import json
 import requests
 import urllib.request
 
-with open('/mnt/d/work_space/naver_hackerton_server/config.json') as config_file:
+
+with open('/mnt/d/work_space/naver_hackaton_server/config.json') as config_file:
     key = json.load(config_file)
 
 client_id = key['id']
@@ -36,6 +37,7 @@ def CSR(input_file):
 
 
 
+
 ## api call for Clova Speech Synthesis
 def CSS(input_text):
     CSS_URL = "https://naveropenapi.apigw.ntruss.com/voice/v1/tts"
@@ -56,6 +58,7 @@ def CSS(input_text):
     response_status(ret)
 
     return ret
+
 
 
 
@@ -92,13 +95,3 @@ def response_status(res):
         print("Error("+str(res["response_code"])+")")
         #print(res["response_content"])
 
-
-if __name__ == "__main__":
-    #file = open('csr_sample1.mp3', 'rb')
-    
-    ret = CSS("조정우 윤한솔 전선영 정현욱 최고")
-    file = ret["response_content"]
-    print(ret)
-
-    with open('output.mp3', 'wb') as f: 
-        f.write(file)
