@@ -87,6 +87,28 @@ def OD(input_file):
 
     return ret
 
+## OD2
+def OD2(cliId):
+    OD_URL = "https://naveropenapi.apigw.ntruss.com/vision-obj/v1/detect"
+    files = {
+        "image" : open('imgs/'+cliId+'.png', 'rb')
+    }
+
+    headers = {
+        "X-NCP-APIGW-API-KEY-ID" : client_id,
+        "X-NCP-APIGW-API-KEY" : client_secret,
+    }
+
+    response = requests.post(OD_URL, files=files, headers=headers)
+
+    ret = {
+        "response_code" : response.status_code,
+        "response_content" : response.text
+    }
+
+    response_status(ret)
+
+    return ret
 
 
 ## print response status

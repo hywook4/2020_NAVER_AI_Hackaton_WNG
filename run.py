@@ -58,7 +58,52 @@ def speech_synthesis():
 
     return ret
 
+# here2
+@app.route('/OD2', methods=["POST"])
+def object_detection2():
+    cliId = request.form['cliId']
 
+    ret = naver_api.OD2(cliId)
+    
+    ## if response code is not 200, then return error
+    if ret["response_code"] != 200:
+        return "Error code : " + str(ret["response_code"])
+
+    print(ret)
+
+    content = eval(ret["response_content"])
+    content = content['predictions'][0]
+    #print(content)
+
+    object_info = {}
+    object_info["names"] = []
+    object_info["positions"] = []
+
+    # boundary for detection score
+    boundary = 0.75
+    
+    # use only objects that are recognized by higher score than boundary
+    for a in range(len(content["detection_scores"])):
+        probability = content["detection_scores"][a]
+        if probability >= boundary:
+            object_info["names"].append(eng_to_kor[content["detection_names"][a]])
+            object_info["positions"].append(content["detection_boxes"][a])
+    
+
+    # get string for client : object position representing string
+    ret_string = utils.get_object_positioned_string(object_info)
+
+
+    ## request text->audio conversion api
+    ret = naver_api.CSS(ret_string)
+    audio_file = ret["response_content"]
+
+    #print(audio_file)
+    ## save response audio file
+    #with open('./test_files/test.mp3', 'wb') as f: 
+    #    f.write(audio_file)
+    
+    return audio_file.decode("iso-8859-1")
 
 ## Api for OD
 @app.route('/OD', methods=["POST"])
@@ -114,7 +159,7 @@ def not_found(error):
 
 if __name__ == '__main__':
     ## make dictionary for kor2eng, eng2kor
-    with open('./mscoco.csv') as csv_file:
+    with open('./mscoco.csv', encoding='utf-8') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=",")
         line_count = 0
         for row in csv_reader:
