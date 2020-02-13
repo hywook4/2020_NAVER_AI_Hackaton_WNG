@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_file
 from flask import make_response
 from flask import request
 from flask import jsonify
@@ -7,6 +7,7 @@ from naver_api import naver_api
 import json
 import csv
 import utils
+import io
 
 app = Flask(__name__)
 
@@ -17,6 +18,17 @@ kor_to_eng = {}
 @app.route('/')
 def index():
     return "test"
+
+
+@app.route('/api/upload', methods = ['POST'])
+def upload_file():
+    try:
+        cliId = request.form['cliId']
+        file = request.files['image']
+        file.save('imgs/' + cliId + '.png')
+        return 'True'
+    except:
+        return 'False'
 
 
 ## Api for CSR
@@ -87,12 +99,12 @@ def object_detection():
     ret = naver_api.CSS(ret_string)
     audio_file = ret["response_content"]
 
-
-    # save response audio file
+    #print(audio_file)
+    ## save response audio file
     #with open('./test_files/test.mp3', 'wb') as f: 
     #    f.write(audio_file)
-
-    return ret_string
+    
+    return audio_file.decode("iso-8859-1")
 
 
 @app.errorhandler(404)
@@ -114,5 +126,4 @@ if __name__ == '__main__':
             eng_to_kor[eng] = kor
             kor_to_eng[kor] = eng
 
-
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
