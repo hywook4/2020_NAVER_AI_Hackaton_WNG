@@ -35,14 +35,28 @@ def upload_file():
 @app.route('/CSR', methods=['POST'])
 def speech_recognition():
     value = request
-    #print(value)
-    #print(value.data)
+    res_data = value.data.decode("utf-8")
+    print(res_data)
+    res_data = json.load(res_data)
+    try:
+        clientId = res_data["clientId"]
+        save_text = res_data["request"][-1:]
+        print(clientId)
+        print(save_text)
+
+        with open(clientId+".txt", "w+") as f:
+            f.write(clientId)
+        
+        return 'True'
+    
+    except:
+        return 'False'
+    
+
 
     #file = open('./test_files/csr_sample1.mp3', 'rb')
     #ret = naver_api.CSR(file)
-    
-    
-    return "success"
+
 
 
 ## Api for CSS
