@@ -20,7 +20,7 @@ kor_to_eng = {}
 def index():
     return "test"
 
-
+# here
 @app.route('/api/upload', methods = ['POST'])
 def upload_file():
     try:
@@ -97,7 +97,7 @@ def object_detection2():
     object_info["positions"] = []
 
     # boundary for detection score
-    boundary = 0.75
+    boundary = 0.60
     
     # use only objects that are recognized by higher score than boundary
     for a in range(len(content["detection_scores"])):
@@ -119,8 +119,12 @@ def object_detection2():
     ## save response audio file
     #with open('./test_files/test.mp3', 'wb') as f: 
     #    f.write(audio_file)
+
+    with open('static/audios/' + str(cliId) + '.mp3', 'wb') as f: 
+        f.write(audio_file)
     
-    return audio_file.decode("iso-8859-1")
+    return cliId
+    #return audio_file.decode("iso-8859-1")
 
 ## Api for OD
 @app.route('/OD', methods=["POST"])
