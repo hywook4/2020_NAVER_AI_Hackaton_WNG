@@ -8,6 +8,7 @@ import json
 import csv
 import utils
 import io
+from ast import literal_eval
 
 app = Flask(__name__)
 
@@ -37,15 +38,17 @@ def speech_recognition():
     value = request
     res_data = value.data.decode("utf-8")
     print(res_data)
-    res_data = json.load(res_data)
+    res_data = literal_eval(res_data)
     try:
         clientId = res_data["clientId"]
-        save_text = res_data["request"][-1:]
+        save_text = res_data["request"][:-1]
         print(clientId)
         print(save_text)
-
-        with open(clientId+".txt", "w+") as f:
-            f.write(clientId)
+        
+        f = open("texts/"+cliendId+".txt", "w")
+        f.write(save_text)
+        f.close()
+      	  
         
         return 'True'
     
